@@ -1,0 +1,105 @@
+		<?php
+		echo $this->Html->ifSet($message);
+		
+		$links = array();
+		
+		$this->Widget->clear();
+		$this->Widget->setLinks($links);
+		$this->Widget->create($this->_("AdminMain.index.boxtitle_notices", true), array('id'=>"admin_main"), $this->Html->ifSet($render_section, null));
+
+		if ($this->Html->ifSet($notices, false) && ($num_notices = count($notices)) > 0) {
+		?>
+		<?php $this->_("AdminMain.add.search_for");?> : <input id="system-search" name="q" type="text" />
+		<table class="table table-list-search">
+			<thead>
+				<tr class="heading_row">
+					<td><span><a href="<?php echo $this->Html->safe($this->base_uri . "plugin/client_notices/admin_main/index/?sort=id&order=" . ($sort == "id" ? $negate_order : $order));?>" class="ajax<?php echo $this->Html->safe($sort == "id" ? " " . $order : "");?>"><?php $this->_("AdminMain.index.heading_id");?></a></span></td>
+					<td><span><a href="<?php echo $this->Html->safe($this->base_uri . "plugin/client_notices/admin_main/index/?sort=client_id&order=" . ($sort == "client_id" ? $negate_order : $order));?>" class="ajax<?php echo $this->Html->safe($sort == "client_id" ? " " . $order : "");?>"><?php $this->_("AdminMain.index.heading_client_id");?></a></span></td>
+					<td><span><a href="<?php echo $this->Html->safe($this->base_uri . "plugin/client_notices/admin_main/index/?sort=notice_name&order=" . ($sort == "notice_name" ? $negate_order : $order));?>" class="ajax<?php echo $this->Html->safe($sort == "notice_name" ? " " . $order : "");?>"><?php $this->_("AdminMain.index.heading_name");?></a></span></td>
+					<td><span><a href="<?php echo $this->Html->safe($this->base_uri . "plugin/client_notices/admin_main/index/?sort=date_added&order=" . ($sort == "date_added" ? $negate_order : $order));?>" class="ajax<?php echo $this->Html->safe($sort == "date_added" ? " " . $order : "");?>"><?php $this->_("AdminMain.index.heading_date_added");?></a></span></td>
+					<td class="last"><?php $this->_("AdminMain.index.heading_options");?></td>
+				</tr>
+			</thead>
+			<tbody>			
+				<?php
+				$i=0;
+				foreach ($notices as $notice) {
+				?>
+				<tr class="<?php echo $this->Html->concat(" ", ($i++%2 == 1) ? "odd_row" : "");?>">
+					<td><?php $this->Html->_($notice->id);?></td>
+					<td><a href="<?php echo $this->Html->safe($this->base_uri . "clients/view/" . $this->Html->ifSet($notice->client_id));?>"><?php $this->Html->_($notice->client_id);?></a></td>
+					<td><?php $this->Html->_($notice->notice_name);?></td>
+					<td><?php echo $this->Date->cast($notice->date_added);?></td>
+					<td>
+						<a href="<?php echo $this->Html->safe($this->base_uri . "plugin/client_notices/admin_main/edit/" . $this->Html->ifSet($notice->id));?>"><?php $this->_("AdminMain.index.option_edit");?></a>,
+						<?php
+						$this->Form->create($this->base_uri . "plugin/client_notices/admin_main/delete/" . $this->Html->ifSet($notice->id));
+						$this->Form->fieldHidden("id", $this->Html->ifSet($notice->id));
+						?>
+						<a href="<?php echo $this->Html->safe($this->base_uri . "plugin/client_notices/admin_main/delete/" . $this->Html->ifSet($notice->id));?>" class="manage" rel="<?php $this->_("AdminMain.modal.delete_notice");?>"><?php $this->_("AdminMain.index.option_delete");?></a>
+						<?php
+						$this->Form->end();
+						?>
+					</td>
+				</tr>
+				<?php
+				}
+				?>
+			</tbody>	
+		</table>
+		<?php
+		}
+		else {
+		?>
+		<div class="empty_section">
+			<div class="empty_box">
+				<?php $this->_("AdminMain.index.no_results");?>
+			</div>
+		</div>
+		<?php
+		}
+		$this->Widget->end();
+		?>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#admin_main a.manage[rel]').blestaModalConfirm({base_url: '<?php echo $this->Html->safe($this->base_uri);?>', close: '<?php $this->_("AppController.modal.text_close");?>', submit: true});
+	});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var activeSystemClass = $('.list-group-item.active');
+
+    //something is entered in search form
+    $('#system-search').keyup( function() {
+       var that = this;
+        // affect all table rows on in systems table
+        var tableBody = $('.table-list-search tbody');
+        var tableRowsClass = $('.table-list-search tbody tr');
+        $('.search-sf').remove();
+        tableRowsClass.each( function(i, val) {
+        
+            //Lower text for case insensitive
+            var rowText = $(val).text().toLowerCase();
+            var inputText = $(that).val().toLowerCase();
+
+            if( rowText.indexOf( inputText ) == -1 )
+            {
+                //hide rows
+                tableRowsClass.eq(i).hide();
+                
+            }
+            else
+            {
+                $('.search-sf').remove();
+                tableRowsClass.eq(i).show();
+            }
+        });
+        //all tr elements are hidden
+        if(tableRowsClass.children(':visible').length == 0)
+        {
+            tableBody.append('<tr class="search-sf"><td class="text-muted" colspan="6">No entries found.</td></tr>');
+        }
+    });
+});	
+</script>		

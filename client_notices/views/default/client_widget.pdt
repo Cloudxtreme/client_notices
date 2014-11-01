@@ -1,0 +1,26 @@
+
+	<?php
+	// Don't show this container when only rendering the widget section
+	if (!$this->Html->ifSet($render_section) && !$this->Html->ifSet($is_ajax)) {
+	?>
+		<div class="col-md-12">
+	<?php
+	}
+	
+		$this->WidgetClient->clear();
+		$this->WidgetClient->create($this->_("ClientMain.index.boxtitle_notice", true), array('id'=>"client_notice"), null);
+		$this->WidgetClient->startBody();
+		
+		echo  $this->Html->Ifset($notice->notice_body); 
+		
+		$this->WidgetClient->endBody();
+
+		$this->WidgetClient->end();
+		
+	// Don't show this container when only rendering the widget section
+	if (!$this->Html->ifSet($render_section) && !$this->Html->ifSet($is_ajax)) {
+	?>
+		</div>
+	<?php
+	}
+	?>

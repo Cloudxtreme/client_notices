@@ -1,0 +1,66 @@
+		<?php
+		echo $this->Html->ifSet($message);
+		
+		$this->Widget->clear();
+		$this->Widget->create($this->_("AdminMain.add.boxtitle_addnotice", true, $this->Html->_($client->id_code, true), $this->Html->_($client->first_name, true), $this->Html->_($client->last_name, true)));
+		?>
+		<div class="inner">
+			<?php 
+			if (!$this->Html->ifSet($notice)) {
+			
+			$this->Form->create(null, array('id'=>"edit_notice"));?>		
+			<div class="pad">
+				<ul>
+					<li>
+						<?php
+						$this->Form->label($this->_("AdminMain.add.field_notice_name", true), "notice_name");
+						$this->Form->fieldText("notice_name", $this->Html->ifSet($vars->notice_name), array('id' => "notice_name"));
+						?>
+					</li>
+					<li>
+						<h4><a href="#" ><?php $this->_("AdminMain.add.field_notice_body");?></a></h4>			
+						<div id="body_content" class="pad_top">
+							<div class="tab_content">
+								<ul class="tabs">
+									<li class="current">
+										<a href="#"><?php $this->Form->label($this->_("AdminMain.add.field_html", true), "notice_body");?></a>
+									</li>
+								</ul>
+								<div class="inner_content">
+									<div><?php $this->Form->fieldTextarea("notice_body", $this->Html->ifSet($vars->notice_body), array('id'=>"notice_body", 'class'=>"wysiwyg"));?></div>
+								</div>
+							</div>
+						</div>							
+					</li>
+				</ul>				
+			</div>
+			<div class="button_row">
+				<a class="btn_right submit" href="#"><?php $this->_("AdminMain.add.field_submit");?></a>
+				<a class="btn_right " href="<?php echo $this->Html->safe($this->base_uri . "plugin/client_notices/admin_main/index/");?>"><?php $this->_("AdminMain.add.field_cancel");?></a>				
+			</div>
+			<?php $this->Form->end();?>	
+			
+			<?php 
+			}
+			else {
+			?>
+			<div class="empty_section">
+				<div class="empty_box">
+					<?php $this->_("AdminMain.index.no_results");?><a href="<?php echo $this->Html->safe($this->base_uri . "plugin/client_notices/admin_main/edit/" . $this->Html->ifSet($notice->id));?>"><?php $this->_("AdminMain.index.notice_link");?></a>
+				</div>
+			</div>
+			<?php
+			}
+			?>			
+			
+		</div>
+		<?php
+		$this->Widget->end();
+
+		$this->Javascript->setInline("
+		$(document).ready(function() {		
+			$('textarea.wysiwyg').ckeditor(function() {}, {language: '" . substr(Configure::get("Blesta.language"), 0, 2) . "'});
+			$('div.tab_content').blestaTabbedContent();
+		});
+		");
+		?>		
